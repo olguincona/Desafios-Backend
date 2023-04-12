@@ -1,7 +1,7 @@
 /* const express = require('express');
 const ProductManager = require('./ProductManager'); */
 import express from 'express';
-import ProductManager from './ProductManager.js';
+import ProductManager from '../ProductManager.js';
 
 const PORT = 8080;
 const app = express();
