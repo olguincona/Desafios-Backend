@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Lista de productos en tiempo real</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      socket.on('newProduct', function(product) {
+        // Añadir el nuevo producto a la lista
+        var productHTML = '<li>' + product.name + ' - ' + product.price + '€</li>';
+        document.querySelector('#productsList').innerHTML += productHTML;
+      });
+      socket.on('removeProduct', function(product) {
+        // Eliminar el producto de la lista
+        var productList = document.querySelector('#productsList');
+        var products = productList.querySelectorAll('li');
+        for (var i = 0; i < products.length; i++) {
+          if (products[i].textContent === (product.name + ' - ' + product.price + '€')) {
+            productList.removeChild(products[i]);
+            break;
+          }
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Lista de productos en tiempo real</h1>
+    <ul id="productsList">
+      {{#each products}}
+        <li>{{this.name}} - {{this.price}}€</li>
+      {{/each}}
+    </ul>
+    <form onsubmit="addProduct(event)">
+      <label for="productName">Nombre del producto:</label>
+      <input type="text" id="productName" name="productName" required>
+      <label for="productPrice">Precio:</label>
+      <input type="number" id="productPrice" name="productPrice" required>
+      <button type="submit">Agregar producto</button>
+    </form>
+    <script>
+      function addProduct(event) {
+        event.preventDefault();
+        var name = document.querySelector('#productName').value;
+        var price = document.querySelector('#productPrice').value;
+        socket.emit('addProduct', { name: name, price: price });
+      }
+    </script>
+  </body>
+</html>
